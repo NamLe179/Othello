@@ -1,0 +1,406 @@
+// "use client"
+
+// import { useState, useEffect } from "react"
+// import { useNavigate } from "react-router-dom"
+// import { useAuth } from "../context/AuthContext"
+// import "./Game.css"
+
+// // Game difficulty levels
+// enum Difficulty {
+//   EASY = "easy",
+//   HARD = "hard",
+// }
+
+// // Game states
+// enum GameState {
+//   SETUP = "setup",
+//   PLAYING = "playing",
+//   FINISHED = "finished",
+// }
+
+// // Disc colors
+// enum Disc {
+//   EMPTY = 0,
+//   BLACK = 1,
+//   WHITE = 2,
+// }
+
+// // Player types
+// enum PlayerType {
+//   HUMAN = "human",
+//   COMPUTER = "computer",
+// }
+
+// // Direction vectors for checking valid moves
+// const DIRECTIONS = [
+//   [-1, -1],
+//   [-1, 0],
+//   [-1, 1],
+//   [0, -1],
+//   [0, 1],
+//   [1, -1],
+//   [1, 0],
+//   [1, 1],
+// ]
+
+// const Game = () => {
+//   const { user } = useAuth()
+//   const navigate = useNavigate()
+
+//   // Game setup state
+//   const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.EASY)
+//   const [gameState, setGameState] = useState<GameState>(GameState.SETUP)
+
+//   // Game board state
+//   const [board, setBoard] = useState<Disc[][]>([])
+//   const [currentPlayer, setCurrentPlayer] = useState<Disc>(Disc.BLACK)
+//   const [scores, setScores] = useState({ black: 2, white: 2 })
+//   const [validMoves, setValidMoves] = useState<[number, number][]>([])
+//   const [gameResult, setGameResult] = useState<string>("")
+
+//   // Initialize the game board
+//   const initializeBoard = () => {
+//     const newBoard: Disc[][] = Array(8)
+//       .fill(null)
+//       .map(() => Array(8).fill(Disc.EMPTY))
+
+//     // Set up the initial four discs in the center
+//     newBoard[3][3] = Disc.WHITE
+//     newBoard[3][4] = Disc.BLACK
+//     newBoard[4][3] = Disc.BLACK
+//     newBoard[4][4] = Disc.WHITE
+
+//     return newBoard
+//   }
+
+//   // Check if a move is valid
+//   const isValidMove = (board: Disc[][], row: number, col: number, player: Disc): boolean => {
+//     // If the cell is not empty, it's not a valid move
+//     if (board[row][col] !== Disc.EMPTY) {
+//       return false
+//     }
+
+//     const opponent = player === Disc.BLACK ? Disc.WHITE : Disc.BLACK
+//     let isValid = false
+
+//     // Check in all 8 directions
+//     for (const [dx, dy] of DIRECTIONS) {
+//       let r = row + dx
+//       let c = col + dy
+//       let hasOpponentDisc = false
+
+//       // Check if there's an opponent's disc in this direction
+//       while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === opponent) {
+//         r += dx
+//         c += dy
+//         hasOpponentDisc = true
+//       }
+
+//       // If we found opponent's disc(s) and then our disc, it's a valid move
+//       if (hasOpponentDisc && r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === player) {
+//         isValid = true
+//         break
+//       }
+//     }
+
+//     return isValid
+//   }
+
+//   // Find all valid moves for the current player
+//   const findValidMoves = (board: Disc[][], player: Disc): [number, number][] => {
+//     const moves: [number, number][] = []
+
+//     for (let row = 0; row < 8; row++) {
+//       for (let col = 0; col < 8; col++) {
+//         if (isValidMove(board, row, col, player)) {
+//           moves.push([row, col])
+//         }
+//       }
+//     }
+
+//     return moves
+//   }
+
+//   // Make a move and flip discs
+//   const makeMove = (board: Disc[][], row: number, col: number, player: Disc): Disc[][] => {
+//     const newBoard = board.map((row) => [...row])
+//     newBoard[row][col] = player
+
+//     const opponent = player === Disc.BLACK ? Disc.WHITE : Disc.BLACK
+
+//     // Check in all 8 directions
+//     for (const [dx, dy] of DIRECTIONS) {
+//       let r = row + dx
+//       let c = col + dy
+//       const discsToFlip: [number, number][] = []
+
+//       // Collect opponent's discs in this direction
+//       while (r >= 0 && r < 8 && c >= 0 && c < 8 && newBoard[r][c] === opponent) {
+//         discsToFlip.push([r, c])
+//         r += dx
+//         c += dy
+//       }
+
+//       // If we found our disc at the end, flip all collected discs
+//       if (r >= 0 && r < 8 && c >= 0 && c < 8 && newBoard[r][c] === player && discsToFlip.length > 0) {
+//         for (const [flipRow, flipCol] of discsToFlip) {
+//           newBoard[flipRow][flipCol] = player
+//         }
+//       }
+//     }
+
+//     return newBoard
+//   }
+
+//   // Calculate scores
+//   const calculateScores = (board: Disc[][]): { black: number; white: number } => {
+//     let black = 0
+//     let white = 0
+
+//     for (let row = 0; row < 8; row++) {
+//       for (let col = 0; col < 8; col++) {
+//         if (board[row][col] === Disc.BLACK) {
+//           black++
+//         } else if (board[row][col] === Disc.WHITE) {
+//           white++
+//         }
+//       }
+//     }
+
+//     return { black, white }
+//   }
+
+//   // Computer AI move
+//   const computerMove = (board: Disc[][], player: Disc, difficulty: Difficulty): [number, number] | null => {
+//     const validMoves = findValidMoves(board, player)
+
+//     if (validMoves.length === 0) {
+//       return null
+//     }
+
+//     if (difficulty === Difficulty.EASY) {
+//       // Easy: Random move
+//       const randomIndex = Math.floor(Math.random() * validMoves.length)
+//       return validMoves[randomIndex]
+//     } else {
+//       // Hard: Choose the move that flips the most discs
+//       let bestMove = validMoves[0]
+//       let bestScore = -1
+
+//       for (const [row, col] of validMoves) {
+//         const newBoard = makeMove(board, row, col, player)
+//         const scores = calculateScores(newBoard)
+//         const score = player === Disc.BLACK ? scores.black : scores.white
+
+//         if (score > bestScore) {
+//           bestScore = score
+//           bestMove = [row, col]
+//         }
+//       }
+
+//       return bestMove
+//     }
+//   }
+
+//   // Start a new game
+//   const startGame = () => {
+//     const newBoard = initializeBoard()
+//     setBoard(newBoard)
+//     setCurrentPlayer(Disc.BLACK)
+//     setScores({ black: 2, white: 2 })
+//     setValidMoves(findValidMoves(newBoard, Disc.BLACK))
+//     setGameState(GameState.PLAYING)
+//     setGameResult("")
+//   }
+
+//   // Handle player's move
+//   const handleCellClick = (row: number, col: number) => {
+//     if (gameState !== GameState.PLAYING || currentPlayer !== Disc.BLACK) {
+//       return
+//     }
+
+//     if (!validMoves.some(([r, c]) => r === row && c === col)) {
+//       return
+//     }
+
+//     // Make the player's move
+//     const newBoard = makeMove(board, row, col, Disc.BLACK)
+//     const newScores = calculateScores(newBoard)
+//     setBoard(newBoard)
+//     setScores(newScores)
+
+//     // Switch to computer's turn
+//     setCurrentPlayer(Disc.WHITE)
+//   }
+
+//   // Handle player surrender
+//   const handleSurrender = () => {
+//     if (gameState !== GameState.PLAYING) {
+//       return
+//     }
+
+//     // End the game and declare computer as winner
+//     setGameState(GameState.FINISHED)
+//     setGameResult("You surrendered. Computer wins!")
+//   }
+
+//   // Computer's turn
+//   useEffect(() => {
+//     if (gameState !== GameState.PLAYING || currentPlayer !== Disc.WHITE) {
+//       return
+//     }
+
+//     const timer = setTimeout(() => {
+//       // Check if computer has valid moves
+//       const computerValidMoves = findValidMoves(board, Disc.WHITE)
+
+//       if (computerValidMoves.length > 0) {
+//         // Computer makes a move
+//         const move = computerMove(board, Disc.WHITE, difficulty)
+
+//         if (move) {
+//           const [row, col] = move
+//           const newBoard = makeMove(board, row, col, Disc.WHITE)
+//           const newScores = calculateScores(newBoard)
+//           setBoard(newBoard)
+//           setScores(newScores)
+//         }
+//       }
+
+//       // Switch back to player's turn
+//       setCurrentPlayer(Disc.BLACK)
+//     }, 1000)
+
+//     return () => clearTimeout(timer)
+//   }, [board, currentPlayer, difficulty, gameState])
+
+//   // Check for valid moves and game end
+//   useEffect(() => {
+//     if (gameState !== GameState.PLAYING) {
+//       return
+//     }
+
+//     const playerValidMoves = findValidMoves(board, Disc.BLACK)
+//     setValidMoves(playerValidMoves)
+
+//     const computerValidMoves = findValidMoves(board, Disc.WHITE)
+
+//     // If neither player has valid moves, the game is over
+//     if (playerValidMoves.length === 0 && computerValidMoves.length === 0) {
+//       setGameState(GameState.FINISHED)
+
+//       // Determine the winner
+//       if (scores.black > scores.white) {
+//         setGameResult("You win!")
+//       } else if (scores.white > scores.black) {
+//         setGameResult("Computer wins!")
+//       } else {
+//         setGameResult("It's a tie!")
+//       }
+//     }
+//   }, [board, scores, gameState])
+
+//   return (
+//     <div className="game-container">
+//       {gameState === GameState.SETUP && (
+//         <div className="game-setup">
+//           <h2>Play Othello</h2>
+//           <div className="setup-card">
+//             <h3>Choose Difficulty</h3>
+//             <div className="difficulty-options">
+//               <button
+//                 className={`difficulty-btn ${difficulty === Difficulty.EASY ? "active" : ""}`}
+//                 onClick={() => setDifficulty(Difficulty.EASY)}
+//               >
+//                 Easy
+//               </button>
+//               <button
+//                 className={`difficulty-btn ${difficulty === Difficulty.HARD ? "active" : ""}`}
+//                 onClick={() => setDifficulty(Difficulty.HARD)}
+//               >
+//                 Hard
+//               </button>
+//             </div>
+//             <button className="btn btn-primary start-btn" onClick={startGame}>
+//               Start Game
+//             </button>
+//           </div>
+//         </div>
+//       )}
+
+//       {(gameState === GameState.PLAYING || gameState === GameState.FINISHED) && (
+//         <div className="game-board-container">
+//           <div className="game-info">
+//             <div className="player-info">
+//               <div className="player-disc black"></div>
+//               <span>You: {scores.black}</span>
+//             </div>
+//             <div className="player-info">
+//               <div className="player-disc white"></div>
+//               <span>Computer: {scores.white}</span>
+//             </div>
+//             {gameState === GameState.PLAYING && (
+//               <>
+//                 <div className="turn-indicator">
+//                   {currentPlayer === Disc.BLACK ? "Your turn" : "Computer is thinking..."}
+//                 </div>
+//                 <button
+//                   className="btn btn-secondary surrender-btn"
+//                   onClick={handleSurrender}
+//                   disabled={currentPlayer !== Disc.BLACK}
+//                 >
+//                   Surrender
+//                 </button>
+//               </>
+//             )}
+//           </div>
+
+//           <div className="game-board">
+//             {board.map((row, rowIndex) => (
+//               <div key={rowIndex} className="board-row">
+//                 {row.map((cell, colIndex) => {
+//                   const isValidMove = validMoves.some(([r, c]) => r === rowIndex && c === colIndex)
+
+//                   return (
+//                     <div
+//                       key={colIndex}
+//                       className={`board-cell ${isValidMove && gameState === GameState.PLAYING ? "valid-move" : ""}`}
+//                       onClick={() => handleCellClick(rowIndex, colIndex)}
+//                     >
+//                       {cell !== Disc.EMPTY && <div className={`disc ${cell === Disc.BLACK ? "black" : "white"}`}></div>}
+//                       {isValidMove && gameState === GameState.PLAYING && currentPlayer === Disc.BLACK && (
+//                         <div className="move-hint"></div>
+//                       )}
+//                     </div>
+//                   )
+//                 })}
+//               </div>
+//             ))}
+//           </div>
+
+//           {gameState === GameState.FINISHED && (
+//             <div className="game-result">
+//               <h3>{gameResult}</h3>
+//               <p>
+//                 Final Score: You {scores.black} - {scores.white} Computer
+//               </p>
+//               <div className="result-buttons">
+//                 <button className="btn btn-primary" onClick={startGame}>
+//                   Play Again
+//                 </button>
+//                 <button className="btn btn-secondary" onClick={() => setGameState(GameState.SETUP)}>
+//                   Change Difficulty
+//                 </button>
+//                 <button className="btn btn-secondary" onClick={() => navigate("/")}>
+//                   Back to Home
+//                 </button>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+//       )}
+//     </div>
+//   )
+// }
+
+// export default Game

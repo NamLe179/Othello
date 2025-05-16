@@ -1,0 +1,122 @@
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.home-subtitle {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+.home-welcome,
+.home-auth {
+  margin-top: 2rem;
+}
+
+.home-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.feature-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.feature-card h3 {
+  margin-bottom: 0.5rem;
+  color: #4a6eb5;
+}
+
+.home-rules {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.home-rules h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #4a6eb5;
+}
+
+.rules-content {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 2rem;
+}
+
+.rules-text ul {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.rules-text li {
+  margin-bottom: 0.5rem;
+}
+
+.board-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: #1e8c4e;
+  border: 3px solid #333;
+  border-radius: 4px;
+  position: relative;
+}
+
+.board-preview::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  background-image:
+    linear-gradient(to right, transparent 12.5%, #000 12.5%, #000 13%, transparent 13%),
+    linear-gradient(to right, transparent 25%, #000 25%, #000 25.5%, transparent 25.5%),
+    linear-gradient(to right, transparent 37.5%, #000 37.5%, #000 38%, transparent 38%),
+    linear-gradient(to right, transparent 50%, #000 50%, #000 50.5%, transparent 50.5%),
+    linear-gradient(to right, transparent 62.5%, #000 62.5%, #000 63%, transparent 63%),
+    linear-gradient(to right, transparent 75%, #000 75%, #000 75.5%, transparent 75.5%),
+    linear-gradient(to right, transparent 87.5%, #000 87.5%, #000 88%, transparent 88%),
+    linear-gradient(to bottom, transparent 12.5%, #000 12.5%, #000 13%, transparent 13%),
+    linear-gradient(to bottom, transparent 25%, #000 25%, #000 25.5%, transparent 25.5%),
+    linear-gradient(to bottom, transparent 37.5%, #000 37.5%, #000 38%, transparent 38%),
+    linear-gradient(to bottom, transparent 50%, #000 50%, #000 50.5%, transparent 50.5%),
+    linear-gradient(to bottom, transparent 62.5%, #000 62.5%, #000 63%, transparent 63%),
+    linear-gradient(to bottom, transparent 75%, #000 75%, #000 75.5%, transparent 75.5%),
+    linear-gradient(to bottom, transparent 87.5%, #000 87.5%, #000 88%, transparent 88%);
+}
+
+@media (max-width: 768px) {
+  .rules-content {
+    grid-template-columns: 1fr;
+  }
+
+  .home-features {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,118 @@
+.leaderboard-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.leaderboard-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.leaderboard-filters {
+  margin-bottom: 2rem;
+}
+
+.filter-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.filter-card h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #4a6eb5;
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #4a6eb5;
+  border-radius: 4px;
+  background-color: white;
+  color: #4a6eb5;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.filter-btn.active {
+  background-color: #4a6eb5;
+  color: white;
+}
+
+.view-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+}
+
+.leaderboard-results {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.leaderboard-results h3 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #4a6eb5;
+}
+
+.leaderboard-table-container {
+  overflow-x: auto;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.leaderboard-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+.leaderboard-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.leaderboard-table tr:hover {
+  background-color: #e9ecef;
+}
+
+@media (max-width: 600px) {
+  .filter-options {
+    flex-direction: column;
+  }
+
+  .filter-btn {
+    width: 100%;
+  }
+}
