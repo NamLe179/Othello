@@ -3,7 +3,7 @@ package com.example.backend_othello.controller;
 import com.example.backend_othello.entity.AIModel;
 import com.example.backend_othello.entity.Game;
 import com.example.backend_othello.entity.Move;
-import com.example.backend_othello.entity.PlayerMove;
+import com.example.backend_othello.entity.PlayerMoveVo;
 import com.example.backend_othello.service.GameService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/game")
@@ -34,7 +32,7 @@ public class GameController {
 
     //API để bắt đầu ván chơi
     @PostMapping("/move")
-    public ResponseEntity<Move> processMove(@Valid @RequestBody PlayerMove userMove) {
+    public ResponseEntity<Move> processMove(@Valid @RequestBody PlayerMoveVo userMove) {
 
         Move aiMove = gameService.processMove(userMove);
         return ResponseEntity.ok(aiMove);

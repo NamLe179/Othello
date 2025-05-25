@@ -82,7 +82,7 @@ public class GameService {
         return game;
     }
 
-    public Move processMove(PlayerMove userMove) {
+    public Move processMove(PlayerMoveVo userMove) {
         //Lấy thông tin từ req
 
         Game game = gameRepository.findById(userMove.getGameId()).orElseThrow(); //Tìm AI theo gameId

@@ -1,13 +1,12 @@
 package com.example.backend_othello.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "PlayerMove")
+@Table(name = "AIMove")
 @Data
-public class PlayerMove {
+public class AIMove {
     @Id
     @Column(length = 10)
     private String id;
@@ -25,6 +24,6 @@ public class PlayerMove {
 //    private String gameId;
 
     @ManyToOne
-    @JoinColumn(name = "gameParticipantId", nullable = false)
-    private GameParticipant gameParticipant;
+    @JoinColumn(name = "AIParticipantId", nullable = false)
+    private AIParticipant aiParticipant;
 }

@@ -79,12 +79,12 @@ const Leaderboard = () => {
               >
                 Khó
               </button>
-              <button
+              {/* <button
                 className={`filter-btn ${gameMode === GameMode.PVP ? "active" : ""}`}
                 onClick={() => setGameMode(GameMode.PVP)}
               >
                 PvP
-              </button>
+              </button> */}
             </div>
           </div>
 

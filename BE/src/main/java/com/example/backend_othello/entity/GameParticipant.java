@@ -20,9 +20,9 @@ public class GameParticipant {
 //    @Column(length = 10, nullable = false)
 //    private String gameId;
 
-    @ManyToOne
-    @JoinColumn(name = "gameId", nullable = false)
-    private Game game;
+//    @ManyToOne
+//    @JoinColumn(name = "gameId", nullable = false)
+//    private Game game;
 
 //    @Column(length = 10, nullable = false)
 //    private String userId;

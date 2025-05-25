@@ -33,7 +33,10 @@ public class Game {
 
     //Có thể null với chế độ PvP
     @ManyToOne
-    @JoinColumn(name = "AIParticipantId", nullable = true)
+    @JoinColumn(name = "AIParticipantId", nullable = false)
     private AIParticipant aiParticipant;
 
+    @ManyToOne
+    @JoinColumn(name = "GameParticipantId", nullable = false)
+    private GameParticipant gameParticipant;
 }
