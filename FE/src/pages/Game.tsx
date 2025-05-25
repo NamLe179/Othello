@@ -43,14 +43,15 @@ interface GameData {
   scoreBlack?: number;
   gameType: string;
   aiParticipantId: string;
+  gameParticipantId: string;
 }
 
 // res sau khi gọi api
 interface MoveResponse {
-  gameId: string;
+  aiParticipantId: string;
   positionX: number | null; 
   positionY: number | null; 
-  color: string;
+  // color: string;
   id?: string; 
   // winner: number;
 }
