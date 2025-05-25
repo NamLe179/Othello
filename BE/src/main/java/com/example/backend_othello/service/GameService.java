@@ -28,8 +28,13 @@ public class GameService {
     @Autowired
     private AIParticipantRepository aiParticipantRepository;
 
+//    @Autowired
+//    private MoveRepository;
     @Autowired
-    private MoveRepository moveRepository;
+    private AIMoveRepository aiMoveRepository;
+
+    @Autowired
+    private PlayerMoveRepository playerMoveRepository;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -63,17 +68,19 @@ public class GameService {
         aiParticipant.setColor("WHITE"); //Cho AI mặc định đi sau = màu trắng
         aiParticipantRepository.save(aiParticipant);
 
-        // Gán AIParticipantId vào Game
-        game.setAiParticipant(aiParticipant);
-        gameRepository.save(game);
+
 
         // Tạo GameParticipant
         GameParticipant userParticipant = new GameParticipant();
         userParticipant.setId(UUID.randomUUID().toString().substring(0, 10));
-        userParticipant.setGame(game);
         userParticipant.setUser(user);
         userParticipant.setColor("BLACK"); //Mặc định người chơi đi trước
         gameParticipantRepository.save(userParticipant);
+
+        // Gán AIParticipantId vào Game
+        game.setGameParticipant(userParticipant);
+        game.setAiParticipant(aiParticipant);
+        gameRepository.save(game);
 
         // Reset game trên service AI
         Map<String, Object> resetRequest = new HashMap<>();
@@ -82,25 +89,40 @@ public class GameService {
         return game;
     }
 
-    public Move processMove(PlayerMoveVo userMove) {
+    public AIMove processMove(PlayerMoveVo userMove) {
         //Lấy thông tin từ req
 
         Game game = gameRepository.findById(userMove.getGameId()).orElseThrow(); //Tìm AI theo gameId
 
-        Move move = new Move();
-
         Integer positionX = userMove.getPositionX();
         Integer positionY = userMove.getPositionY();
 
-        // Lưu nước đi của người chơi vào bảng Move
-        if (positionX != null && positionY != null) {
-            move.setId(UUID.randomUUID().toString().substring(0, 10));
-            move.setPositionX(positionX);
-            move.setPositionY(positionY);
-            move.setColor(userMove.getColor());
-            move.setGame(game);
-            moveRepository.save(move);
+        GameParticipant gameParticipant = game.getGameParticipant();
+        if(gameParticipant == null){
+            throw new IllegalStateException("GameParticipant not found for gameId: "+ game.getId());
         }
+
+        //Luu nuoc di vao PlayerMove
+        PlayerMove playerMove = new PlayerMove();
+        playerMove.setId(UUID.randomUUID().toString().substring(0,10));
+        playerMove.setPositionX(positionX);
+        playerMove.setPositionY(positionY);
+        playerMove.setGameParticipant(gameParticipant);
+        playerMoveRepository.save(playerMove);
+
+//        Move move = new Move();
+
+
+
+        // Lưu nước đi của người chơi vào bảng Move
+//        if (positionX != null && positionY != null) {
+//            move.setId(UUID.randomUUID().toString().substring(0, 10));
+//            move.setPositionX(positionX);
+//            move.setPositionY(positionY);
+//            move.setColor(userMove.getColor());
+//            move.setGame(game);
+//            moveRepository.save(move);
+//        }
 
         // Chuẩn bị request với nước đi của người chơi gửi tới service của AI
         Map<String, Object> serviceRequest = new HashMap<>();
@@ -111,7 +133,7 @@ public class GameService {
 
         // Gửi nước đi tới serviceUrl của AIModel
 
-        AIParticipant aiParticipant = aiParticipantRepository.findByGameId(game.getId());
+        AIParticipant aiParticipant = game.getAiParticipant();
         AIModel aiModel = aiParticipant.getAiModel();
         Map<String, Object> serviceResponse = restTemplate.postForObject(aiModel.getServiceUrl() + "/play", serviceRequest, Map.class);
 
@@ -122,13 +144,12 @@ public class GameService {
         Integer winner = (Integer) serviceResponse.get("winner");
 
         // Lưu nước đi của AI vào bảng Move
-        Move aiMoveEntity = new Move();
+        AIMove aiMove = new AIMove();
 
-        aiMoveEntity.setId(UUID.randomUUID().toString().substring(0, 10));
-        aiMoveEntity.setGame(game);
-        aiMoveEntity.setPositionX(aiPositionX);
-        aiMoveEntity.setPositionY(aiPositionY);
-        aiMoveEntity.setColor("WHITE"); //AI mặc định trăắng
+        aiMove.setId(UUID.randomUUID().toString().substring(0, 10));
+        aiMove.setPositionX(aiPositionX);
+        aiMove.setPositionY(aiPositionY);
+        aiMove.setAiParticipant(aiParticipant);
 
 
 
@@ -137,28 +158,28 @@ public class GameService {
             game.setEndDateTime(new Date());
             gameRepository.save(game);
             if (aiPositionX == null && aiPositionY == null){
-                aiMoveEntity.setPositionX(99999);
-                aiMoveEntity.setPositionY(99999);
+                aiMove.setPositionX(99999);
+                aiMove.setPositionY(99999);
             }
 
 
         }
 
-        moveRepository.save(aiMoveEntity);
+        aiMoveRepository.save(aiMove);
 
-        System.out.println(aiMoveEntity);
+        System.out.println(aiMove);
         //Trả về res của AI
-        return aiMoveEntity;
+        return aiMove;
     }
 
     //Cập nhật lại Game khi kết thúc
     public void endGame(String gameId, String userId, String winner, int scoreBlack, int scoreWhite) {
         Game game = gameRepository.findById(gameId).orElseThrow();
-        GameParticipant userParticipant = gameParticipantRepository.findByGameIdAndUserId(gameId, userId);
+        GameParticipant userParticipant = game.getGameParticipant();
         if (userParticipant == null) {
             throw new IllegalStateException("GameParticipant not found for gameId: " + gameId + " and userId: " + userId);
         }
-        AIParticipant aiParticipant = aiParticipantRepository.findByGameId(gameId);
+        AIParticipant aiParticipant = game.getAiParticipant();
         if (aiParticipant == null) {
             throw new IllegalStateException("AIParticipant not found for gameId: " + gameId);
         }
@@ -166,6 +187,7 @@ public class GameService {
         // Cập nhật điểm của màu tương ứng trong bảng Game
         game.setScoreBlack(scoreBlack);
         game.setScoreWhite(scoreWhite);
+
         gameRepository.save(game);
 
         // Cập nhật kết quả trong bảng GameParticipant và AIParticipant
@@ -188,8 +210,8 @@ public class GameService {
     public Game replayGame(String gameId) {
         // Lấy AIModel và User từ ván cũ
         Game oldGame = gameRepository.findById(gameId).orElseThrow();
-        AIParticipant aiParticipant = aiParticipantRepository.findByGameId(gameId);
-        GameParticipant userParticipant = gameParticipantRepository.findByGameId(gameId);
+        AIParticipant aiParticipant = oldGame.getAiParticipant();
+        GameParticipant userParticipant = oldGame.getGameParticipant();
 
         // Tạo ván mới với cùng AIModel và userId
         return startGame(aiParticipant.getAiModel().getId(), userParticipant.getUser().getId());
