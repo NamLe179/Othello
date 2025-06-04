@@ -1,0 +1,61 @@
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
+--
+-- Host: localhost    Database: db_othello
+-- ------------------------------------------------------
+-- Server version	8.0.35
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `game`
+--
+
+DROP TABLE IF EXISTS `game`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `game` (
+  `id` varchar(10) NOT NULL,
+  `startDateTime` datetime NOT NULL,
+  `endDateTime` datetime DEFAULT NULL,
+  `scoreBlack` int DEFAULT NULL,
+  `scoreWhite` int DEFAULT NULL,
+  `gameType` varchar(10) NOT NULL,
+  `aiParticipantId` varchar(10) DEFAULT NULL,
+  `gameParticipantId` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `aiParticipantId` (`aiParticipantId`),
+  KEY `gameParticipantId` (`gameParticipantId`),
+  CONSTRAINT `game_ibfk_1` FOREIGN KEY (`aiParticipantId`) REFERENCES `aiparticipant` (`id`),
+  CONSTRAINT `game_ibfk_2` FOREIGN KEY (`gameParticipantId`) REFERENCES `gameparticipant` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `game`
+--
+
+LOCK TABLES `game` WRITE;
+/*!40000 ALTER TABLE `game` DISABLE KEYS */;
+INSERT INTO `game` VALUES ('00f4e775-8','2025-05-30 17:47:48',NULL,3,3,'PvE_HARD','e87b0de9-c','522b6842-4'),('0b217712-0','2025-05-26 01:54:51','2025-05-26 01:58:44',47,0,'PvE_HARD','5bcb0c98-7','d81ce1e8-a'),('1','2025-05-26 00:00:00','2025-05-26 00:00:00',44,20,'PvE_HARD','1','1'),('10','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_EASY','10','10'),('11','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_EASY','11','11'),('12','2025-05-26 00:00:00','2025-05-26 00:00:00',44,20,'PvE_EASY','12','12'),('13','2025-05-26 00:00:00','2025-05-26 00:00:00',44,20,'PvE_EASY','13','13'),('14','2025-05-26 00:00:00','2025-05-26 00:00:00',44,20,'PvE_EASY','14','14'),('15','2025-03-20 00:00:00','2025-03-20 00:00:00',44,20,'PvE_EASY','15','15'),('16','2025-03-20 00:00:00','2025-03-20 00:00:00',44,20,'PvE_EASY','16','16'),('17','2025-03-20 00:00:00','2025-03-20 00:00:00',44,20,'PvE_EASY','17','17'),('2','2025-05-26 00:00:00','2025-05-26 00:00:00',44,20,'PvE_HARD','2','2'),('20623aa2-a','2025-05-27 09:40:09',NULL,2,2,'PvE_HARD','01c92b79-a','6ee2de69-f'),('3','2025-05-26 00:00:00','2025-05-26 00:00:00',44,20,'PvE_HARD','3','3'),('4','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_HARD','4','4'),('5','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_HARD','5','5'),('557b3170-2','2025-05-26 02:07:16','2025-05-26 02:11:20',60,3,'PvE_HARD','f860f5b5-f','6ff2c760-d'),('6','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_EASY','6','6'),('65784c60-6','2025-05-26 01:51:08','2025-05-26 01:54:47',14,49,'PvE_HARD','905243e0-5','f1c618f0-2'),('7','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_EASY','7','7'),('8','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_EASY','8','8'),('9','2025-05-20 00:00:00','2025-05-20 00:00:00',44,20,'PvE_EASY','9','9'),('dab5c457-c','2025-05-30 17:47:26',NULL,2,2,'PvE_HARD','3ef0fc91-9','f93a3a9c-3'),('fc9a0130-1','2025-05-30 16:33:05',NULL,15,9,'PvE_HARD','8e31e11e-d','228d05ec-c');
+/*!40000 ALTER TABLE `game` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-06-04 23:10:36
