@@ -34,7 +34,7 @@ interface AIModel {
   serviceUrl: string;
 }
 
-// tương ứng với Game BE
+// tương ứng với Game trong BE
 interface GameData {
   id: string;
   startTime: string;

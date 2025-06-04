@@ -27,7 +27,7 @@ export const getAIModels = async () => {
 
 // Bắt đầu game
 export const startGame = async (aiModelId: string, userId: string) => {
-  return api.post(`/game/start?aiModelId=${aiModelId}&userId=${userId}`);
+  return api.post(`/game/start`, {aiModelId, userId});
 };
 
 // Gửi nước đi hoặc pass
@@ -37,7 +37,7 @@ export const makeMove = async (move: { gameId: string; positionX?: number; posit
 
 // Kết thúc game
 export const endGame = async (gameId: string, userId: string, winner: string, scoreBlack: number, scoreWhite: number) => {
-  return api.post(`/game/end?gameId=${gameId}&userId=${userId}&winner=${winner}&scoreBlack=${scoreBlack}&scoreWhite=${scoreWhite}`);
+  return api.post(`/game/end`, {gameId, userId, winner, scoreBlack, scoreWhite});
 };
 
 // Chơi lại game
